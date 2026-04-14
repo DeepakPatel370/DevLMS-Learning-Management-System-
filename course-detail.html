@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Detail - DevLMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="wrapper">
+    <nav class="sidebar bg-dark text-white">
+      <div class="sidebar-header p-4 text-center">
+        <h3 class="fw-bold text-primary"><i class="fas fa-code"></i> DevLMS</h3>
+      </div>
+      <ul class="list-unstyled components">
+        <li><a href="dashboard.html"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
+        <li><a href="courses.html" class="active"><i class="fas fa-book me-2"></i> Courses</a></li>
+        <li><a href="editor.html"><i class="fas fa-laptop-code me-2"></i> Code Practice</a></li>
+        <li><a href="profile.html"><i class="fas fa-user me-2"></i> Profile</a></li>
+      </ul>
+    </nav>
+
+    <div id="content" class="content bg-light w-100">
+      <a href="courses.html" class="btn btn-sm btn-outline-secondary mb-3"><i class="fas fa-arrow-left"></i> Back to Courses</a>
+      <h2 class="fw-bold mb-4" id="course-title">Loading Course...</h2>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <!-- Topics List -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white fw-bold">Topics</div>
+            <ul class="list-group list-group-flush" id="topics-list">
+              <li class="list-group-item">Loading...</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="col-md-8">
+          <!-- Content Panel -->
+          <div class="card shadow-sm border-0" id="topic-content-panel" style="display:none;">
+            <div class="card-body">
+              <h4 id="topic-title" class="fw-bold mb-3">Topic Title</h4>
+              
+              <div class="ratio ratio-16x9 mb-4" id="video-container" style="display:none;">
+                <iframe id="topic-video" src="" allowfullscreen></iframe>
+              </div>
+
+              <div id="theory-content" class="mb-4"></div>
+              
+              <hr>
+              <div class="d-flex justify-content-between">
+                <a href="editor.html" class="btn btn-outline-dark"><i class="fas fa-laptop-code"></i> Practice Code</a>
+                <a href="#" id="take-quiz-btn" class="btn btn-primary">Take Topic Quiz <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+          
+          <div id="no-topic-selected" class="text-center py-5 text-muted">
+            <i class="fas fa-mouse-pointer fa-3x mb-3"></i>
+            <p>Select a topic from the left sidebar to view contents.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseId = urlParams.get('id');
+      if (!courseId) return window.location.href = 'courses.html';
+
+      let currentCourse = null;
+
+      try {
+        currentCourse = await api.get(`/courses/${courseId}`);
+        document.getElementById('course-title').innerText = currentCourse.title;
+        
+        const list = document.getElementById('topics-list');
+        list.innerHTML = '';
+        currentCourse.topics.forEach((topic, index) => {
+          list.innerHTML += `
+            <a href="#" class="list-group-item list-group-item-action topic-link" data-index="${index}">
+              ${topic.title}
+            </a>
+          `;
+        });
+
+        // Add event listeners to list items
+        document.querySelectorAll('.topic-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active classes
+            document.querySelectorAll('.topic-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+
+            const idx = link.getAttribute('data-index');
+            const topic = currentCourse.topics[idx];
+            
+            document.getElementById('no-topic-selected').style.display = 'none';
+            document.getElementById('topic-content-panel').style.display = 'block';
+            
+            document.getElementById('topic-title').innerText = topic.title;
+            document.getElementById('theory-content').innerHTML = topic.theoryContent;
+            
+            const vidContainer = document.getElementById('video-container');
+            if (topic.videoUrl) {
+              vidContainer.style.display = 'block';
+              document.getElementById('topic-video').src = topic.videoUrl;
+            } else {
+              vidContainer.style.display = 'none';
+              document.getElementById('topic-video').src = '';
+            }
+
+            // Set Quiz Link
+            document.getElementById('take-quiz-btn').href = `quiz.html?topicId=${topic._id}`;
+          });
+        });
+
+      } catch (err) {
+        document.getElementById('course-title').innerText = 'Course not found';
+      }
+    });
+  </script>
+</body>
+</html>

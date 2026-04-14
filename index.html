@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevLMS - Learn Web Development</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="index.html">
+        <i class="fas fa-code"></i> DevLMS
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <button class="btn btn-sm btn-outline-secondary me-3" id="theme-toggle">
+              <i class="fas fa-moon"></i>
+            </button>
+          </li>
+          <li class="nav-item" id="auth-links">
+            <a class="nav-link" href="login.html">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="animate-fade-in">
+    <section class="hero-section text-center">
+      <div class="container py-5">
+        <h1 class="display-3 fw-bold mb-4">Elevate Your <span class="text-primary italic">Developer</span> Career</h1>
+        <p class="lead mb-5 text-muted mx-auto" style="max-width: 700px;">Master industry-standard tools with our comprehensive DevLMS platform. interactive courses, real-time code execution, and professional certifications.</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a href="login.html" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-lg" id="hero-cta">Start Learning Now</a>
+          <a href="#courses-grid" class="btn btn-outline-secondary btn-lg px-5 py-3 rounded-pill">Browse Courses</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold m-0">Available <span class="text-primary">Paths</span></h2>
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle rounded-pill px-4" type="button" data-bs-toggle="dropdown">
+            Filter Courses
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">All</a></li>
+            <li><a class="dropdown-item" href="#">Web Dev</a></li>
+            <li><a class="dropdown-item" href="#">Frontend</a></li>
+            <li><a class="dropdown-item" href="#">Fullstack</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="row g-4" id="courses-grid">
+        <!-- Courses will be injected here -->
+        <div class="text-center w-100 py-5">
+           <div class="spinner-grow text-primary" role="status"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-dark text-light py-4 mt-5 text-center">
+    <div class="container">
+      <p class="mb-0">&copy; 2026 DevLMS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if(isDark) document.body.classList.add('dark-mode');
+    
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDarkNow = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkNow);
+      themeBtn.innerHTML = isDarkNow ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+    
+    if(isDark) themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+
+    // Fetch and display courses
+    let allCourses = [];
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        allCourses = await api.get('/courses');
+        renderCourses(allCourses);
+        
+        // Setup filters
+        document.querySelectorAll('.dropdown-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const filter = e.target.innerText.trim();
+            if (filter === 'All') {
+              renderCourses(allCourses);
+            } else {
+              const filtered = allCourses.filter(c => (c.category || 'Web Dev') === filter);
+              renderCourses(filtered);
+            }
+          });
+        });
+
+      } catch (err) {
+        document.getElementById('courses-grid').innerHTML = '<div class="col-12 text-center text-danger">Failed to load courses.</div>';
+      }
+    });
+
+    function renderCourses(courses) {
+      const grid = document.getElementById('courses-grid');
+      grid.innerHTML = '';
+      
+      if (courses.length === 0) {
+        grid.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No courses found matching this criteria.</p></div>';
+        return;
+      }
+
+      const isLoggedIn = !!localStorage.getItem('token');
+
+      courses.forEach(course => {
+        const link = isLoggedIn ? `course-detail.html?id=${course._id}` : 'login.html';
+        grid.innerHTML += `
+          <div class="col-md-4 animate-fade-in">
+            <div class="card h-100 border-0 course-card p-2">
+              <div class="card-body text-center p-4">
+                <div class="icon-wrapper mb-4 d-inline-block p-4 rounded-circle" style="background: rgba(99, 102, 241, 0.1);">
+                  <img src="${course.thumbnail || 'https://cdn-icons-png.flaticon.com/512/732/732212.png'}" width="70" alt="${course.title}">
+                </div>
+                <h5 class="fw-bold mb-2">${course.title}</h5>
+                <p class="text-muted small mb-4" style="height: 40px; overflow: hidden;">${course.description}</p>
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                  <span class="badge bg-light text-primary rounded-pill px-3 py-2">${course.category || 'Web Dev'}</span>
+                  <a href="${link}" class="btn btn-primary px-4 rounded-pill">View Course</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Check auth to change navbar and hero CTA
+    const authLinks = document.getElementById('auth-links');
+    const heroCta = document.getElementById('hero-cta');
+    if (localStorage.getItem('token')) {
+      if (authLinks) {
+        authLinks.innerHTML = `<a class="btn btn-primary" href="dashboard.html">Go to Dashboard</a>`;
+      }
+      if (heroCta) {
+        heroCta.innerText = 'Back to Dashboard';
+        heroCta.href = 'dashboard.html';
+      }
+    }
+  </script>
+</body>
+</html>

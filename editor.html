@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Practice - DevLMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+
+    .wrapper { height: 100vh; display: flex; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar { min-width: 220px; max-width: 220px; overflow-y: auto; }
+
+    /* Main content stretches full remaining height */
+    #editor-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      background: #1a1a2e;
+    }
+
+    /* Top toolbar */
+    .editor-toolbar {
+      background: #16213e;
+      border-bottom: 1px solid #0f3460;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .editor-toolbar h5 { color: #e0e0e0; margin: 0; font-size: 1rem; font-weight: 600; }
+
+    /* Panels row — takes all remaining height */
+    .editor-panels {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    /* Code panel */
+    .code-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      border-right: 2px solid #0f3460;
+    }
+    .panel-header {
+      background: #0f3460;
+      color: #a9c8f5;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    #code-editor {
+      flex: 1;
+      background: #1e1e2e;
+      color: #cdd6f4;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 16px;
+      border: none;
+      resize: none;
+      outline: none;
+      tab-size: 2;
+      overflow-y: auto;
+    }
+    #code-editor::selection { background: #44475a; }
+
+    /* Preview panel */
+    .preview-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    #preview-frame {
+      flex: 1;
+      border: none;
+      background: white;
+    }
+
+    /* Buttons */
+    .btn-run {
+      background: #00b894;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 18px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: background 0.2s;
+    }
+    .btn-run:hover { background: #00a381; color: white; }
+    .btn-save {
+      background: #4361ee;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 18px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: background 0.2s;
+    }
+    .btn-save:hover { background: #3a56d4; color: white; }
+
+    .status-msg {
+      font-size: 0.82rem;
+      color: #a9c8f5;
+      margin-left: auto;
+      padding-right: 4px;
+    }
+    .status-msg.success { color: #00b894; }
+    .status-msg.error { color: #ff7675; }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar bg-dark text-white d-flex flex-column">
+      <div class="sidebar-header p-3 text-center">
+        <h5 class="fw-bold text-primary mb-0"><i class="fas fa-code"></i> DevLMS</h5>
+      </div>
+      <ul class="list-unstyled components mb-0">
+        <li><a href="dashboard.html"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
+        <li><a href="courses.html"><i class="fas fa-book me-2"></i> Courses</a></li>
+        <li><a href="editor.html" class="active"><i class="fas fa-laptop-code me-2"></i> Code Practice</a></li>
+        <li><a href="profile.html"><i class="fas fa-user me-2"></i> Profile</a></li>
+      </ul>
+    </nav>
+
+    <!-- Editor Content -->
+    <div id="editor-content">
+      <!-- Toolbar -->
+      <div class="editor-toolbar">
+        <h5><i class="fas fa-laptop-code me-2 text-primary"></i>Live Code Editor</h5>
+        <button class="btn-run" id="run-btn"><i class="fas fa-play me-1"></i> Run</button>
+        <button class="btn-save" id="save-btn"><i class="fas fa-save me-1"></i> Save</button>
+        <span class="status-msg" id="status-msg"></span>
+      </div>
+
+      <!-- Editor + Preview side by side -->
+      <div class="editor-panels">
+        <!-- Code Input -->
+        <div class="code-panel">
+          <div class="panel-header"><i class="fas fa-code me-1"></i> HTML / CSS / JS</div>
+          <textarea id="code-editor" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 { color: #667eea; margin-bottom: 8px; }
+    p { color: #666; }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: transform 0.2s;
+    }
+    button:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Hello, DevLMS! 🚀</h1>
+    <p>Edit this code and click <strong>Run</strong></p>
+    <button onclick="alert('Great job!')">Click Me</button>
+  </div>
+</body>
+</html></textarea>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="preview-panel">
+          <div class="panel-header"><i class="fas fa-eye me-1"></i> Live Preview</div>
+          <iframe id="preview-frame"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!localStorage.getItem('token')) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const codeEditor = document.getElementById('code-editor');
+      const previewFrame = document.getElementById('preview-frame');
+      const runBtn = document.getElementById('run-btn');
+      const saveBtn = document.getElementById('save-btn');
+      const statusMsg = document.getElementById('status-msg');
+
+      const setStatus = (msg, type = '') => {
+        statusMsg.textContent = msg;
+        statusMsg.className = 'status-msg ' + type;
+        if (msg) setTimeout(() => { statusMsg.textContent = ''; statusMsg.className = 'status-msg'; }, 3000);
+      };
+
+      const runCode = () => {
+        const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        doc.open();
+        doc.write(codeEditor.value);
+        doc.close();
+      };
+
+      // Auto-run on page load
+      runCode();
+
+      // Run on button click
+      runBtn.addEventListener('click', runCode);
+
+      // Tab key support in textarea
+      codeEditor.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const s = codeEditor.selectionStart;
+          codeEditor.value = codeEditor.value.substring(0, s) + '  ' + codeEditor.value.substring(codeEditor.selectionEnd);
+          codeEditor.selectionStart = codeEditor.selectionEnd = s + 2;
+        }
+      });
+
+      // Save to DB
+      saveBtn.addEventListener('click', async () => {
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
+        saveBtn.disabled = true;
+        try {
+          const data = await api.post('/code/save', {
+            language: 'html',
+            codeSnippet: codeEditor.value
+          });
+          setStatus('✅ ' + (data.message || 'Saved!'), 'success');
+        } catch (err) {
+          setStatus('❌ Save failed.', 'error');
+        } finally {
+          saveBtn.innerHTML = '<i class="fas fa-save me-1"></i> Save';
+          saveBtn.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

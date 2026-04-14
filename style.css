@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Core Palette - Professional Indigo/Violet */
+  --primary: #6366f1;
+  --primary-glow: rgba(99, 102, 241, 0.4);
+  --secondary: #8b5cf6;
+  --accent: #ec4899;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  
+  /* Light Mode Surfaces */
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  --radius: 1rem;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"], .dark-mode {
+  --bg-main: #0f172a;
+  --bg-surface: #1e293b;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* Premium Navigation */
+.navbar {
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+}
+
+/* Hero Section Upgrade */
+.hero-section {
+  position: relative;
+  padding: 120px 0;
+  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent),
+              radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent);
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 300px;
+  height: 300px;
+  background: var(--primary);
+  filter: blur(150px);
+  opacity: 0.2;
+  z-index: -1;
+}
+
+/* Premium Cards */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.course-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
+}
+
+.course-card img {
+  transition: transform 0.5s ease;
+}
+
+.course-card:hover img {
+  transform: scale(1.1);
+}
+
+/* Layout Backbone */
+.wrapper {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.content {
+  flex: 1;
+  width: 100%;
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  transition: all 0.3s ease;
+}
+
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  margin: 0.2rem 1rem;
+  transition: all 0.2s;
+}
+
+.sidebar ul li a i {
+  width: 24px;
+  font-size: 1.2rem;
+}
+
+.sidebar ul li a:hover, .sidebar ul li a.active {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+}
+
+.sidebar ul li a.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* Quiz Tiles */
+.quiz-option {
+  display: block;
+  background: var(--bg-surface);
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.quiz-option:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.quiz-option input[type="radio"] {
+  display: none;
+}
+
+.quiz-option.selected {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
